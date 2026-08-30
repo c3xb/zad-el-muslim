@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
     body { font-family: 'Tajawal', sans-serif; background-color: #0b1120; color: #f8fafc; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s ease, color 0.3s ease; }
-    .quran-font { font-family: 'Amiri', serif; line-height: 2.6; }
+    .quran-font { font-family: 'Amiri', serif; line-height: 2.4; }
     .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(217, 119, 6, 0.15); transition: background 0.3s ease, border 0.3s ease, color 0.3s ease; }
     .glass-gold { background: linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(180, 83, 9, 0.05) 100%); backdrop-filter: blur(16px); border: 1px solid rgba(251, 191, 36, 0.25); }
     .bg-pattern { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fbbf24' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
@@ -29,7 +29,7 @@
     .nav-item.active .icon-bg { background-color: rgba(251, 191, 36, 0.15); transform: translateY(-4px); }
     .tasbeeh-btn:active { transform: scale(0.92); }
     .hide-scroll::-webkit-scrollbar { display: none; }
-    .ayah-separator { display: inline-block; margin: 0 6px; color: #fbbf24; font-size: 0.8em; }
+    .ayah-separator { display: inline-block; margin: 0 8px; color: #fbbf24; font-size: 0.8em; }
     .loader { border: 3px solid rgba(251, 191, 36, 0.3); border-radius: 50%; border-top: 3px solid #fbbf24; width: 40px; height: 40px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     
@@ -38,19 +38,11 @@
     .surah-overlay { transform: translateY(100%); transition: transform 0.3s ease-in-out; z-index: 100; }
     .surah-overlay.open { transform: translateY(0); }
 
-    /* حل مشكلة تداخل الحروف على الهواتف */
-    #reader-content {
-        text-align: center;
-        word-spacing: 2px;
-        letter-spacing: 0;
-    }
-
+    /* تعديلات الهاتف لعارض السور */
     @media (max-width: 640px) {
         #reader-content {
-            font-size: 1.5rem;
-            line-height: 2.6;
-            text-align: center;
-            word-spacing: 1px;
+            font-size: 1.4rem;
+            line-height: 2.2;
         }
         #reader-bismillah {
             font-size: 1.5rem;
@@ -154,6 +146,7 @@
 
         <!-- صفحة مواقيت الصلاة -->
         <div id="view-prayer" class="page-view space-y-4">
+            <!-- بطاقة الساعة الحية لمدينة جيجل -->
             <div class="glass-gold p-5 rounded-2xl border border-amber-500/30 relative overflow-hidden shadow-lg">
                 <div class="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3">
                     <div class="flex items-center gap-2.5">
@@ -253,7 +246,7 @@
             <div id="reader-loading" class="flex justify-center py-12 hidden">
                 <div class="loader"></div>
             </div>
-            <div id="reader-content" class="quran-font text-2xl md:text-3xl leading-[2.6] text-slate-100 text-center"></div>
+            <div id="reader-content" class="quran-font text-3xl leading-[2.8] text-slate-100 text-justify"></div>
         </div>
     </div>
 
@@ -268,49 +261,5 @@
                 <div class="icon-bg w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300"><i class="fa-solid fa-book-quran text-lg"></i></div>
                 <span class="text-[10px] font-bold">القرآن</span>
             </button>
-            <button onclick="switchTab('azkar')" id="nav-azkar" class="nav-item flex flex-col items-center gap-1 text-slate-400 transition-all duration-300 min-w-[50px]">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300"><i class="fa-solid fa-hands-praying text-lg"></i></div>
-                <span class="text-[10px] font-bold">الأذكار</span>
-            </button>
-            <button onclick="switchTab('prayer')" id="nav-prayer" class="nav-item flex flex-col items-center gap-1 text-slate-400 transition-all duration-300 min-w-[50px]">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300"><i class="fa-solid fa-mosque text-lg"></i></div>
-                <span class="text-[10px] font-bold">المواقيت</span>
-            </button>
-            <button onclick="switchTab('names')" id="nav-names" class="nav-item flex flex-col items-center gap-1 text-slate-400 transition-all duration-300 min-w-[50px]">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300"><i class="fa-solid fa-star text-lg"></i></div>
-                <span class="text-[10px] font-bold">الأسماء</span>
-            </button>
-            <button onclick="switchTab('hadith')" id="nav-hadith" class="nav-item flex flex-col items-center gap-1 text-slate-400 transition-all duration-300 min-w-[50px]">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300"><i class="fa-solid fa-book-open text-lg"></i></div>
-                <span class="text-[10px] font-bold">الأحاديث</span>
-            </button>
-        </div>
-    </nav>
+            <button onclick="switchTab('azkar')" id="nav-azkar" class="nav-item flex fle
 
-    <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById('view-' + tabId).classList.add('active');
-            document.getElementById('nav-' + tabId).classList.add('active');
-
-            if(tabId === 'quran' && !window.surahsLoaded) fetchSurahs();
-            if(tabId === 'prayer' && !window.prayerLoaded) fetchPrayerTimes();
-            if(tabId === 'names' && !window.namesLoaded) renderNames();
-            if(tabId === 'azkar' && !window.azkarLoaded) renderAzkar('morning');
-            if(tabId === 'hadith' && !window.hadithLoaded) renderHadithCategory('all');
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const icon = document.getElementById('themeIcon');
-            if(document.body.classList.contains('light-mode')) {
-                icon.className = 'fa-solid fa-sun';
-            } else {
-                icon.className = 'fa-solid fa-moon';
-            }
-        }
-    </script>
-</body>
-</html>
