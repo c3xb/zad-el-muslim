@@ -409,10 +409,18 @@
         class="surah-overlay fixed inset-0 bg-[#0b1120] bg-pattern overflow-y-auto w-full h-full pb-20">
         <div
             class="sticky top-0 z-50 glass border-b border-amber-500/20 px-4 py-3 flex items-center justify-between shadow-lg">
-            <h2 id="reader-title" class="text-2xl text-amber-500 quran-font font-bold"></h2>
+            <div class="flex items-center gap-3">
+                <button onclick="closeSurah()"
+                    class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 p-2.5 rounded-xl flex items-center justify-center transition-colors border border-amber-500/30 cursor-pointer"
+                    title="العودة لقائمة السور">
+                    <i class="fa-solid fa-arrow-right text-lg"></i>
+                </button>
+                <h2 id="reader-title" class="text-2xl text-amber-500 quran-font font-bold"></h2>
+            </div>
             <button onclick="closeSurah()"
-                class="bg-amber-500/20 text-amber-400 p-2 rounded-xl flex items-center justify-center w-10 h-10 transition-colors">
-                <i class="fa-solid fa-xmark text-xl"></i>
+                class="text-xs glass text-slate-300 hover:text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/20 font-bold transition-colors flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-list text-amber-500"></i>
+                <span>فهرس السور</span>
             </button>
         </div>
         <div id="reader-body" class="max-w-4xl mx-auto p-4 md:p-8">
@@ -639,6 +647,11 @@
             document.getElementById('reader-content').innerHTML = '';
             document.getElementById('reader-loading').classList.remove('hidden');
 
+            // تحديث سجل المتصفح لتمكين الرجوع في الهاتف والكمبيوتر
+            if (!window.location.hash.startsWith('#surah-')) {
+                history.pushState({ surahViewer: true, id: id }, '', `#surah-${id}`);
+            }
+
             if (id != 1 && id != 9) {
                 document.getElementById('reader-bismillah').classList.remove('hidden');
             } else {
@@ -665,8 +678,20 @@
             }
         }
 
-        window.closeSurah = function () {
-            document.getElementById('surah-overlay').classList.remove('open');
+        window.closeSurah = function (shouldGoBack = true) {
+            const overlay = document.getElementById('surah-overlay');
+            if (overlay) {
+                overlay.classList.remove('open');
+            }
+            switchTab('quran');
+
+            if (shouldGoBack && window.location.hash.startsWith('#surah-')) {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.hash = 'quran';
+                }
+            }
         }
 
         const azkarData = {
@@ -1017,7 +1042,24 @@
         updateJijelClock();
         setInterval(updateJijelClock, 1000);
 
-        // التوجيه للتبويب المختار عند بدء التشغيل أو تغيير الرابط
+        // معالجة زر الرجوع في المتصفح والهاتف
+        window.addEventListener('popstate', (event) => {
+            const overlay = document.getElementById('surah-overlay');
+            if (overlay && overlay.classList.contains('open')) {
+                overlay.classList.remove('open');
+                switchTab('quran');
+                return;
+            }
+
+            const hash = window.location.hash.replace('#', '');
+            if (availableTabs.includes(hash)) {
+                switchTab(hash);
+            } else if (!hash || !hash.startsWith('surah-')) {
+                switchTab('tasbeeh');
+            }
+        });
+
+        // التوجيه للتبويب المختار عند تغيير الرابط
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.replace('#', '');
             if (availableTabs.includes(hash)) {
@@ -1025,11 +1067,12 @@
             }
         });
 
-        if (window.location.hash) {
-            const initialTab = window.location.hash.replace('#', '');
-            if (availableTabs.includes(initialTab)) {
-                switchTab(initialTab);
-            }
+        // جعل خانة التسبيح هي الافتراضية عند فتح الموقع
+        const initialHash = window.location.hash.replace('#', '');
+        if (initialHash && availableTabs.includes(initialHash)) {
+            switchTab(initialHash);
+        } else {
+            switchTab('tasbeeh');
         }
     </script>
 </body>
