@@ -3,7 +3,9 @@ const CACHE_NAME = "zad-muslim-v1";
 const FILES_TO_CACHE = [
     "./",
     "./index.html",
-    "./manifest.json"
+    "./manifest.json",
+    "./icons/zad_al_muslim_icon_192.png",
+    "./icons/zad_al_muslim_icon_512.png"
 ];
 
 self.addEventListener("install", event => {
