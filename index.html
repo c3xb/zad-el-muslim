@@ -47,7 +47,6 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fbbf24' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Light Mode Styles */
         body.light-mode {
             background-color: #f1f5f9;
             color: #0f172a;
@@ -172,26 +171,97 @@
 
 <body class="bg-pattern min-h-screen pb-28">
 
-    <header class="sticky top-0 w-full z-50 glass border-b border-amber-500/20 px-6 py-4 flex justify-between items-center shadow-lg">
-        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 quran-font">زاد المسلم</h1>
-        <div class="flex items-center gap-4">
-            <div id="header-date" class="text-amber-100/80 text-sm font-medium hidden sm:block"></div>
+    <header class="sticky top-0 w-full z-50 glass border-b border-amber-500/20 px-4 md:px-6 py-4 flex justify-between items-center shadow-lg">
+        <div class="flex items-center gap-3">
+            <button onclick="toggleSidebar()" class="glass p-2.5 rounded-xl text-amber-400 hover:bg-amber-500/20 transition-colors flex items-center justify-center w-10 h-10 shadow-sm border border-amber-500/30">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+            <h1 class="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500 quran-font">زاد المسلم</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <div id="header-date" class="text-amber-100/80 text-xs md:text-sm font-medium hidden sm:block"></div>
             <button onclick="toggleTheme()" class="glass p-2.5 rounded-xl text-amber-400 hover:bg-amber-500/20 transition-colors flex items-center justify-center w-10 h-10 shadow-sm border border-amber-500/30">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
             </button>
         </div>
     </header>
 
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-[90] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <aside id="sidebar" class="fixed top-0 right-0 h-full w-80 max-w-[85vw] glass bg-slate-900/95 z-[100] transform translate-x-full transition-transform duration-300 overflow-y-auto p-5 border-l border-amber-500/20 flex flex-col justify-between">
+        <div>
+            <div class="flex justify-between items-center border-b border-amber-500/20 pb-4 mb-5">
+                <h2 class="text-xl font-bold text-amber-400 quran-font">القائمة الجانبية</h2>
+                <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="glass p-4 rounded-xl border border-amber-500/20">
+                    <button onclick="toggleFeature('zakat-feature')" class="w-full flex justify-between items-center font-bold text-amber-300 text-sm">
+                        <span><i class="fa-solid fa-calculator ml-2"></i> حاسبة الزكاة</span>
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="zakat-feature" class="hidden mt-3 pt-3 border-t border-slate-700/50 space-y-2">
+                        <input type="number" id="zakatAmount" placeholder="المبلغ المالي" class="w-full text-xs p-2 rounded glass bg-slate-800 text-white border border-amber-500/20">
+                        <button onclick="calculateZakat()" class="w-full bg-amber-500 text-slate-900 text-xs font-bold py-1.5 rounded">حساب الزكاة (2.5%)</button>
+                        <p id="zakatResult" class="text-xs text-amber-400 font-bold text-center mt-1"></p>
+                    </div>
+                </div>
+
+                <div class="glass p-4 rounded-xl border border-amber-500/20">
+                    <button onclick="toggleFeature('wisdom-feature')" class="w-full flex justify-between items-center font-bold text-amber-300 text-sm">
+                        <span><i class="fa-solid fa-lightbulb ml-2"></i> حكمة وآية اليوم</span>
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="wisdom-feature" class="hidden mt-3 pt-3 border-t border-slate-700/50 space-y-2">
+                        <p id="wisdomText" class="text-xs text-slate-200 quran-font leading-relaxed">انقر لعرض آية أو حكمة ملهمة</p>
+                        <button onclick="getRandomWisdom()" class="w-full bg-amber-500/20 text-amber-300 text-xs font-bold py-1.5 rounded border border-amber-500/30">توليد حكمة جديدة</button>
+                    </div>
+                </div>
+
+                <div class="glass p-4 rounded-xl border border-amber-500/20">
+                    <button onclick="toggleFeature('qibla-feature')" class="w-full flex justify-between items-center font-bold text-amber-300 text-sm">
+                        <span><i class="fa-solid fa-compass ml-2"></i> اتجاه القبلة التقريبي</span>
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="qibla-feature" class="hidden mt-3 pt-3 border-t border-slate-700/50 text-center">
+                        <div class="w-16 h-16 mx-auto rounded-full border-2 border-amber-400 flex items-center justify-center text-amber-400 relative">
+                            <i class="fa-solid fa-location-arrow transform -rotate-45 text-xl"></i>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-2">اتجاة القبلة التقريبي للجزائر: ~115° جنوب شرق</p>
+                    </div>
+                </div>
+
+                <div class="glass p-4 rounded-xl border border-amber-500/20">
+                    <button onclick="toggleFeature('night-feature')" class="w-full flex justify-between items-center font-bold text-amber-300 text-sm">
+                        <span><i class="fa-solid fa-moon ml-2"></i> الثلث الأخير من الليل</span>
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                    <div id="night-feature" class="hidden mt-3 pt-3 border-t border-slate-700/50 space-y-2">
+                        <p class="text-xs text-amber-400 font-bold text-center">يبدأ الثلث الأخير تقريباً من الساعة 01:30 AM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pt-4 border-t border-amber-500/20 text-center text-[11px] text-slate-400">
+            تطبيق زاد المسلم الشامل
+        </div>
+    </aside>
+
     <main class="max-w-3xl mx-auto px-4 pt-6">
-        <!-- صفحة التسبيح -->
         <div id="view-tasbeeh" class="page-view active space-y-6">
-            <div class="w-full glass rounded-2xl p-2 flex gap-2 overflow-x-auto hide-scroll snap-x shadow-inner">
-                <button onclick="setZikr('سبحان الله', 33)" class="zikr-btn active flex-1 min-w-[100px] snap-center py-3 px-4 rounded-xl bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 transition-all">سبحان الله</button>
-                <button onclick="setZikr('الحمد لله', 33)" class="zikr-btn flex-1 min-w-[100px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">الحمد لله</button>
-                <button onclick="setZikr('الله أكبر', 33)" class="zikr-btn flex-1 min-w-[100px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">الله أكبر</button>
-                <button onclick="setZikr('لا إله إلا الله', 100)" class="zikr-btn flex-1 min-w-[130px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">لا إله إلا الله</button>
-                <button onclick="setZikr('أستغفر الله', 100)" class="zikr-btn flex-1 min-w-[120px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">أستغفر الله</button>
-                <button onclick="setZikr('الصلاة على النبي', 100)" class="zikr-btn flex-1 min-w-[150px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">الصلاة على النبي</button>
+            <div class="relative w-full">
+                <div id="zikrScrollContainer" onscroll="checkZikrScroll()" class="w-full glass rounded-2xl p-2 flex gap-2 overflow-x-auto hide-scroll snap-x shadow-inner">
+                    <button onclick="setZikr('سبحان الله', 33)" class="zikr-btn active flex-1 min-w-[100px] snap-center py-3 px-4 rounded-xl bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 transition-all">سبحان الله</button>
+                    <button onclick="setZikr('الحمد لله', 33)" class="zikr-btn flex-1 min-w-[100px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">الحمد لله</button>
+                    <button onclick="setZikr('الله أكبر', 33)" class="zikr-btn flex-1 min-w-[100px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">الله أكبر</button>
+                    <button onclick="setZikr('لا إله إلا الله', 100)" class="zikr-btn flex-1 min-w-[130px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">لا إله إلا الله</button>
+                    <button onclick="setZikr('أستغفر الله', 100)" class="zikr-btn flex-1 min-w-[120px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">أستغفر الله</button>
+                    <button onclick="setZikr('الصلاة على النبي', 100)" class="zikr-btn flex-1 min-w-[150px] snap-center py-3 px-4 rounded-xl bg-transparent text-slate-300 hover:bg-slate-800/50 font-bold border border-transparent transition-all">الصلاة على النبي</button>
+                </div>
+                <div id="zikrScrollHint" class="absolute left-2 top-1/2 -translate-y-1/2 bg-amber-500/90 text-slate-900 rounded-full w-7 h-7 flex items-center justify-center shadow-lg pointer-events-none animate-bounce z-10 transition-opacity duration-300">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </div>
             </div>
 
             <div class="glass-gold w-full rounded-[2.5rem] p-8 flex flex-col items-center shadow-[0_0_50px_rgba(217,119,6,0.08)] relative overflow-hidden">
@@ -223,7 +293,6 @@
             </div>
         </div>
 
-        <!-- صفحة القرآن الكريم -->
         <div id="view-quran" class="page-view space-y-4">
             <div class="glass p-5 rounded-2xl flex justify-between items-center">
                 <h2 class="text-2xl font-bold text-amber-500 quran-font">فهرس سور القرآن الكريم</h2>
@@ -243,7 +312,6 @@
             <div id="surahs-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 hidden"></div>
         </div>
 
-        <!-- صفحة الأذكار -->
         <div id="view-azkar" class="page-view space-y-4">
             <div class="flex gap-2 overflow-x-auto hide-scroll pb-2">
                 <button onclick="renderAzkar('morning', this)" class="azkar-tab active min-w-max px-5 py-2.5 rounded-full bg-amber-500 text-slate-900 font-bold transition-all text-sm shadow-sm">أذكار الصباح</button>
@@ -256,7 +324,6 @@
             <div id="azkar-container" class="space-y-4"></div>
         </div>
 
-        <!-- صفحة مواقيت الصلاة -->
         <div id="view-prayer" class="page-view space-y-4">
             <div class="glass-gold p-5 rounded-2xl border border-amber-500/30 relative overflow-hidden shadow-lg">
                 <div class="flex items-center justify-between border-b border-amber-500/20 pb-3 mb-3">
@@ -307,7 +374,6 @@
             <div id="prayer-container" class="space-y-3 hidden"></div>
         </div>
 
-        <!-- صفحة أسماء الله الحسنى -->
         <div id="view-names" class="page-view space-y-4">
             <div class="glass p-5 rounded-2xl flex justify-between items-center">
                 <h2 class="text-2xl font-bold text-amber-500 quran-font">أسماء الله الحسنى</h2>
@@ -316,7 +382,6 @@
             <div id="names-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- صفحة الأحاديث -->
         <div id="view-hadith" class="page-view space-y-4">
             <div class="glass p-5 rounded-2xl flex justify-between items-center">
                 <h2 class="text-2xl font-bold text-amber-500 quran-font">موسوعة الأحاديث النبوية الشريفة</h2>
@@ -338,7 +403,6 @@
         </div>
     </main>
 
-    <!-- عارض السورة (Modal) -->
     <div id="surah-overlay" class="surah-overlay fixed inset-0 bg-[#0b1120] bg-pattern overflow-y-auto w-full h-full pb-20">
         <div class="sticky top-0 z-50 glass border-b border-amber-500/20 px-4 py-3 flex items-center justify-between shadow-lg">
             <div class="flex items-center gap-3">
@@ -363,7 +427,6 @@
         </div>
     </div>
 
-    <!-- شريط التنقل السفلي -->
     <nav class="fixed bottom-0 w-full glass rounded-t-3xl border-t border-amber-500/20 z-[60] pb-safe">
         <div class="max-w-xl mx-auto flex justify-between items-center px-4 py-3 overflow-x-auto hide-scroll">
             <button onclick="switchTab('tasbeeh')" id="nav-tasbeeh" class="nav-item active flex flex-col items-center gap-1 text-slate-400 transition-all duration-300 min-w-[50px]">
@@ -394,6 +457,57 @@
     </nav>
 
     <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('translate-x-full')) {
+                sidebar.classList.remove('translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function toggleFeature(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden');
+        }
+
+        function calculateZakat() {
+            const val = parseFloat(document.getElementById('zakatAmount').value);
+            const res = document.getElementById('zakatResult');
+            if (!isNaN(val) && val > 0) {
+                res.innerText = "مقدار الزكاة المستحقة: " + (val * 0.025).toFixed(2);
+            } else {
+                res.innerText = "يرجى إدخال مبلغ صحيح";
+            }
+        }
+
+        const wisdoms = [
+            "﴿وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ﴾",
+            "﴿أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾",
+            "«مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ»",
+            "«احْفَظِ اللَّهَ يَحْفَظْكَ»",
+            "﴿وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا﴾"
+        ];
+
+        function getRandomWisdom() {
+            const rand = wisdoms[Math.floor(Math.random() * wisdoms.length)];
+            document.getElementById('wisdomText').innerText = rand;
+        }
+
+        function checkZikrScroll() {
+            const el = document.getElementById('zikrScrollContainer');
+            const hint = document.getElementById('zikrScrollHint');
+            if (!el || !hint) return;
+            if (Math.abs(el.scrollLeft) > 30) {
+                hint.classList.add('opacity-0');
+            } else {
+                hint.classList.remove('opacity-0');
+            }
+        }
+
         const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', numberingSystem: 'arab' };
         const headerDateEl = document.getElementById('header-date');
         if (headerDateEl) {
